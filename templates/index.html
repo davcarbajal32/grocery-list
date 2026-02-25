@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>David's Quick Calculator</title>
+    <title>Grocery List</title>
 
     <style>
         body {
+            background-color: black;
+            color: #d8b4ff;
             font-family: Arial, sans-serif;
-            background-color: #f4f6f9;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -14,72 +15,72 @@
         }
 
         .container {
-            background: white;
-            padding: 40px;
-            border-radius: 10px;
-            box-shadow: 0px 4px 15px rgba(0,0,0,0.15);
-            width: 500px;
             text-align: center;
+            width: 500px;
         }
 
-        h2 {
+        h1 {
             margin-bottom: 25px;
         }
 
-        input, select {
-            width: 95%;
-            padding: 10px;
-            margin: 10px 0;
-            border-radius: 5px;
-            border: 1px solid #ccc;
+        input, button {
+            padding: 8px;
+            margin: 5px;
+            font-size: 14px;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+            margin-top: 20px;
+            font-size: 18px;
+        }
+
+        li {
+            margin-bottom: 15px;
         }
 
         button {
-            width: 95%;
-            padding: 12px;
-            background-color: #6a0dad;
-            color: white;
+            background-color: #a855f7;
             border: none;
-            border-radius: 5px;
+            color: white;
             cursor: pointer;
-            font-size: 16px;
         }
 
         button:hover {
-            background-color: #5a0099;
-        }
-
-        .result {
-            margin-top: 20px;
-            font-weight: bold;
-            font-size: 20px;
+            background-color: #9333ea;
         }
     </style>
 </head>
 
 <body>
     <div class="container">
-        <h2>Welcome to David Carbajal's Quick Calculator</h2>
 
-        <form method="POST" action="/calculator">
-            <input type="text" name="num1" placeholder="Enter first number">
-            <input type="text" name="num2" placeholder="Enter second number">
+        <h1>Welcome to David Carbajals Grocery List Application</h1>
 
-            <select name="op">
-                <option value="1">Add</option>
-                <option value="2">Subtract</option>
-                <option value="3">Multiply</option>
-                <option value="4">Divide</option>
-            </select>
-
-            <button type="submit">Calculate</button>
+        <form action="/add" method="POST">
+            <input type="text" name="item" placeholder="Item name">
+            <input type="number" name="quantity" placeholder="Quantity" min="1">
+            <button type="submit">Add</button>
         </form>
 
-        {% if result is not none %}
-            <div class="result">
-                Result: {{ result }}
-            </div>
-        {% endif %}
+        <ul>
+            {% for item in items %}
+                <li>
+                    {{ item.name }} - Quantity: {{ item.quantity }}
+
+                    <form action="/update/{{ item._id }}" method="POST">
+                        <input type="number" name="quantity" min="1" placeholder="New quantity">
+                        <button type="submit">Update</button>
+                    </form>
+
+                    <form action="/delete/{{ item._id }}" method="POST">
+                        <button type="submit">Remove</button>
+                    </form>
+                </li>
+            {% endfor %}
+        </ul>
+
     </div>
 </body>
 </html>

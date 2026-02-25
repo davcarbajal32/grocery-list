@@ -1,52 +1,45 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect
+from pymongo import MongoClient
+from bson.objectid import ObjectId
+
 app = Flask(__name__)
 
+client = MongoClient("mongodb+srv://djcarbajal_db_user:dCgHo9EcZ8fbf2OR@cluster0.qupfqm3.mongodb.net/?appName=Cluster0")
 
-def add(a, b):
-    c = a + b
-    return c
-
-def sub(a, b):
-    c = a - b
-    return c
-
-def mult(a, b):
-    c = a * b
-    return c
-
-def div(a, b):
-    c = a / b
-    return c
-
+db = client["grocery_db"]
+collection = db["items"]
 
 @app.route("/")
-def start_index():
-    return render_template("index.html")
-@app.route("/welcome")
-def welcome():
-    return "Welcome"
-@app.route("/calculator") #mapping connects url request to python program
-@app.route("/calculator", methods=["GET", "POST"])
-def calculator():
-    if request.method == "POST":
-        num1 = float(request.form.get("num1"))
-        num2 = float(request.form.get("num2"))
-        ans = int(request.form.get("op"))
+def index():
+    items = list(collection.find())
+    return render_template("index.html", items=items)
 
-        if ans == 1:
-            result = add(num1, num2)
-        elif ans == 2:
-            result = sub(num1, num2)
-        elif ans == 3:
-            result = mult(num1, num2)
-        elif ans == 4:
-            result = div(num1, num2)
-        else:
-            result = "Invalid option"
+@app.route("/add", methods=["POST"])
+def add_item():
+    item_name = request.form.get("item")
+    quantity = request.form.get("quantity")
 
-        return render_template("index.html", result=result)
+    if item_name and quantity:
+        collection.insert_one({
+            "name": item_name,
+            "quantity": int(quantity)
+        })
 
-    return render_template("index.html", result=None)
+    return redirect("/")
 
+@app.route("/delete/<item_id>", methods=["POST"])
+def delete_item(item_id):
+    collection.delete_one({"_id": ObjectId(item_id)})
+    return redirect("/")
 
-app.run(host = "0.0.0.0", port=5050)
+@app.route("/update/<item_id>", methods=["POST"])
+def update_quantity(item_id):
+    new_quantity = request.form.get("quantity")
+    if new_quantity:
+        collection.update_one(
+            {"_id": ObjectId(item_id)},
+            {"$set": {"quantity": int(new_quantity)}}
+        )
+    return redirect("/")
+
+app.run(host="0.0.0.0", port=5050)
