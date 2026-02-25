@@ -42,4 +42,3 @@ def update_quantity(item_id):
         )
     return redirect("/")
 
-app.run(host="0.0.0.0", port=5050)
