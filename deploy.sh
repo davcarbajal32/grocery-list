@@ -18,10 +18,5 @@ fi
 source .venv/bin/activate
 pip install -r requirements.txt
 
-echo "Stopping old app..."
-pkill -f "$APP_FILE" || true
-
-echo "Starting app..."
-nohup python3 "$APP_FILE" > log.txt 2>&1 &
-
+sudo systemctl restart grocery
 echo "Deployment complete."
