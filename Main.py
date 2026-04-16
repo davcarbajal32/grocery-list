@@ -1,10 +1,11 @@
+
 from flask import Flask, render_template, request, redirect
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 
 app = Flask(__name__)
 
-client = MongoClient("mongodb+srv://djcarbajal_db_user:dCgHo9EcZ8fbf2OR@cluster0.qupfqm3.mongodb.net/?appName=Cluster0")
+client = MongoClient("mongodb+srv://djcarbajal_db_user:Mellow@cluster0.qupfqm3.mongodb.net/?appName=Cluster0")
 
 db = client["grocery_db"]
 collection = db["items"]
